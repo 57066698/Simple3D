@@ -2,7 +2,7 @@ import numpy as np
 from OpenGL.GL import *
 from OpenGL.GL.shaders import compileProgram, compileShader
 import ctypes
-from simple3D import Mesh
+from simple3D import mesh
 import pyrr
 import time
 import glfw
@@ -32,7 +32,8 @@ void main()
 
 class Material:
     def __init__(self):
-        raise NotImplemented("error")
+        self.mesh = None
+        self.VOA = None
 
     def combine_vertices(self, vertices_list, length_list):
         vertices_2dlist = []
@@ -41,7 +42,7 @@ class Material:
         result = np.concatenate(vertices_2dlist, axis=-1)
         return result
 
-    def show_mesh(self, mesh: Mesh):
+    def show_mesh(self, mesh: mesh):
         raise NotImplemented("error")
 
     def render(self, projection, cameraLoc, meshLoc):

@@ -1,12 +1,13 @@
-from simple3D import MeshObject
+from simple3D import meshObject
 from OpenGL.GL import *
 import pyrr
+from liegroups.numpy import SO3
 
 class Camera:
     def __init__(self):
         self.cameraPos = pyrr.Vector3([0, 0, 3])
         self.projection = pyrr.matrix44.create_perspective_projection_matrix(45, 1280 / 720, 0.1, 100)
-        # self.cameraLoc = pyrr.matrix44.create_from_translation(pyrr.Vector3([0, 0, -3]))
+        self.dis = 3
 
     def zoom(self, zoom_num):
         dis = pyrr.vector3.length(self.cameraPos)
@@ -19,11 +20,17 @@ class Camera:
         :param x:
         :param y:
         """
-        dis = pyrr.vector3.length(self.cameraPos)
-        self.cameraPos = self.cameraPos + pyrr.Vector3([-x * 0.01, -y * 0.01, 0])
-        self.cameraPos = pyrr.vector3.normalise(self.cameraPos) * dis
 
-    def render(self, meshObjs: [MeshObject]):
+        # 计算变化值,move 在球面发生的旋转位移
+
+        # 将变化值乘到目标
+
+        # 计算新的pos
+
+        self.cameraPos = self.cameraPos + pyrr.Vector3([-x * 0.01, -y * 0.01, 0])
+        self.cameraPos = pyrr.vector3.normalise(self.cameraPos) * self.dis
+
+    def render(self, meshObjs: [meshObject]):
         self.cameraLoc = pyrr.matrix44.create_look_at(self.cameraPos,
                                                       pyrr.Vector3([0, 0, 0]),
                                                       pyrr.Vector3([0, 1, 0]))

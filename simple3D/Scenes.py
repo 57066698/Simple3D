@@ -8,7 +8,7 @@ from OpenGL.GL.shaders import compileProgram, compileShader
 import pyrr
 import numpy as np
 import ctypes
-from simple3D import Mesh, MeshObject
+from simple3D import mesh, meshObject
 from simple3D.Camera import Camera
 from simple3D.tools.ScreenShot import screen_shot
 
@@ -127,7 +127,7 @@ class Scene:
 
         glfw.terminate()
 
-def display(meshObj:MeshObject):
+def display(meshObj:meshObject):
     scene = Scene()
     scene.add(meshObj)
     scene.render()

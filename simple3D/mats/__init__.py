@@ -1,3 +1,0 @@
-from simple3D.mats.VectexcolorMaterial import VectexcolorMaterial
-from simple3D.mats.TextureMaterial import TextureMaterial
-from simple3D.mats.TestMeterial import TestMeterial

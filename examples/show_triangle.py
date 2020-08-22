@@ -3,9 +3,12 @@
     @st
 """
 
-from simple3D import MeshObject, Material, Mesh, display
+
+from simple3D.meshObject import MeshObject
+from simple3D.mesh import Mesh
+from simple3D.Scenes import display
 import numpy as np
-from simple3D.mats import VectexcolorMaterial
+from simple3D.mats.vectexcolorMaterial import VectexcolorMaterial
 
 vertices_and_color = [0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
             1.5, 0, 0.0, 0.0, 1.0, 0.0,

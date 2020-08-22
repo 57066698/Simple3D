@@ -2,7 +2,8 @@ import numpy as np
 from OpenGL.GL import *
 from OpenGL.GL.shaders import compileProgram, compileShader
 import ctypes
-from simple3D import Mesh, Material
+from simple3D.mesh import Mesh
+from simple3D.material import Material
 import pyrr
 import time
 import glfw
@@ -41,7 +42,7 @@ class TextureMaterial(Material):
         self.texture_np = cv2.cvtColor(texture_np, cv2.COLOR_RGB2RGBA)
         self.VOA = None
 
-    def show_mesh(self, mesh:Mesh):
+    def show_mesh(self, mesh):
         self.mesh = mesh
         self.shader = compileProgram(compileShader(vertex_src, GL_VERTEX_SHADER),
                                      compileShader(fragment_src, GL_FRAGMENT_SHADER))

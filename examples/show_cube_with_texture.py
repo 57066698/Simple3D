@@ -3,10 +3,10 @@
     @st
 """
 
-from simple3D import display
-from simple3D import Mesh
-from simple3D import MeshObject
-from simple3D.mats import TextureMaterial
+from simple3D.Scenes import display
+from simple3D.mesh import Mesh
+from simple3D.meshObject import MeshObject
+from simple3D.mats.textureMaterial import TextureMaterial
 import numpy as np
 import cv2
 
