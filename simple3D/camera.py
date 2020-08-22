@@ -1,7 +1,6 @@
 from simple3D import meshObject
 from OpenGL.GL import *
 import pyrr
-from liegroups.numpy import SO3
 
 class Camera:
     def __init__(self):

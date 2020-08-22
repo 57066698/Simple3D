@@ -3,7 +3,7 @@
     @st
 """
 
-from simple3D.Scenes import display
+from simple3D.scenes import display
 from simple3D.mesh import Mesh
 from simple3D.meshObject import MeshObject
 from simple3D.mats.textureMaterial import TextureMaterial
