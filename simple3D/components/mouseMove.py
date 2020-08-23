@@ -3,16 +3,18 @@
 """
 
 import glfw
+from simple3D import Component
 
-class MouseMove:
-    def __init__(self, window, width, height):
+class MouseMove(Component):
+    def __init__(self, scene):
+        super().__init__()
 
-        glfw.set_mouse_button_callback(window, self.mouse_down_callback)
-        glfw.set_scroll_callback(window, self.scroll_callback)
-        glfw.set_cursor_pos_callback(window, self.mouse_move_callback)
+        glfw.set_mouse_button_callback(scene.window, self.mouse_down_callback)
+        glfw.set_scroll_callback(scene.window, self.scroll_callback)
+        glfw.set_cursor_pos_callback(scene.window, self.mouse_move_callback)
 
         # mouse
-        self.lastX, self.lastY = width / 2, height / 2
+        self.lastX, self.lastY = scene.width / 2, scene.height / 2
         self.first_mouse = True
         self.is_mouse_left_down = False
         self.cached_mouse_move_X = 0

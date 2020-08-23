@@ -1,6 +1,6 @@
 from OpenGL.GL import *
 from OpenGL.GL.shaders import compileProgram, compileShader
-from simple3D import material, mesh
+from simple3D import Material, Mesh
 import numpy as np
 import pyrr
 
@@ -30,10 +30,9 @@ void main()
 
 
 
-class LineMeterial(material):
+class LineMeterial(Material):
     def __init__(self):
-        self.mesh = None
-        self.VOA = None
+        super().__init__()
 
     def show_mesh(self, mesh):
         self.mesh = mesh

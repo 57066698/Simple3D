@@ -3,17 +3,14 @@
     @st
 """
 import pyrr
-import glfw
+from simple3D.core.transform import Transfom
 
-class MeshObject:
+class DisplayObject:
     def __init__(self, mesh, material):
         self.mesh = mesh
         self.material = material
         self._is_showing = False
-        self.mesh_loc = pyrr.Matrix44.from_translation(pyrr.Vector3([0, 0, 0]))
-
-    def translate(self, x, y, z):
-        self.mesh_loc = self.mesh_loc + pyrr.Matrix44.from_translation(pyrr.Vector3([x, y, z]))
+        self.transfrom = Transfom()
 
     def render(self, projection, cameraLoc):
 
@@ -25,4 +22,4 @@ class MeshObject:
         if not self._is_showing:
             self.material.show_mesh(self.mesh)
             self._is_showing = True
-        self.material.render(projection, cameraLoc, self.mesh_loc)
+        self.material.render(projection, cameraLoc, pyrr.matrix44.create_from_translation(self.transfrom.pos))

@@ -1,11 +1,5 @@
 import numpy as np
-from OpenGL.GL import *
-from OpenGL.GL.shaders import compileProgram, compileShader
-import ctypes
-from simple3D import mesh
-import pyrr
-import time
-import glfw
+from simple3D.core import mesh
 
 vertex_src = """
 # version 330

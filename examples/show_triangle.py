@@ -3,9 +3,8 @@
     @st
 """
 
-
-from simple3D.meshObject import MeshObject
-from simple3D.mesh import Mesh
+from simple3D.core.displayObject import DisplayObject
+from simple3D.core.mesh import Mesh
 from simple3D.scenes import display
 import numpy as np
 from simple3D.mats.vectexcolorMaterial import VectexcolorMaterial
@@ -30,7 +29,7 @@ color_np = color_np.reshape((-1))
 def get_triangle():
     mesh = Mesh(vertices_np, indices, vectices_color=color_np)
     material = VectexcolorMaterial()
-    meshObj = MeshObject(mesh, material)
+    meshObj = DisplayObject(mesh, material)
     return meshObj
 
 if __name__ == "__main__":

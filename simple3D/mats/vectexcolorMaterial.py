@@ -2,7 +2,7 @@ import numpy as np
 from OpenGL.GL import *
 from OpenGL.GL.shaders import compileProgram, compileShader
 import ctypes
-from simple3D.material import Material
+from simple3D.core.material import Material
 import pyrr
 
 

@@ -4,8 +4,9 @@
 
 import glfw
 from OpenGL.GL import *
-from simple3D import Camera, MouseMove
-
+from simple3D import Camera, DisplayObject
+from simple3D import Component
+from simple3D.components.mouseMove import MouseMove
 
 class Scene:
     def __init__(self, WIDTH=1280, HEIGHT=720, framerate=25):
@@ -33,26 +34,37 @@ class Scene:
 
         self.camera = None
 
+    @property
+    def default_camera(self):
+        if self.camera == None:
+            self.camera = Camera()
+        return self.camera
+
     def window_resize(self, window, width, height):
         glViewport(0, 0, width, height)
 
-    def register(self, component):
-        self.components.append(component)
+    def add(self, *args):
+        for item in args:
+            if isinstance(item, DisplayObject):
+                self.meshObjs.append(item)
+            if isinstance(item, Component):
+                self.components.append(item)
 
-    def unregister(self, component):
-        self.components.remove(component)
-
-    def add(self, meshObj):
-        self.meshObjs.append(meshObj)
-
-    def remove(self, meshObj):
-        self.meshObjs.remove(meshObj)
+    def remove(self, *args):
+        for item in args:
+            if isinstance(item, DisplayObject):
+                self.meshObjs.remove(item)
+            elif isinstance(item, Component):
+                self.components.remove(item)
 
     def update_components(self):
         for component in self.components:
             component.update()
 
     def render(self):
+
+        if self.camera is None:
+            self.camera = Camera()
 
         glClearColor(0, 0.1, 0.1, 1)
         glEnable(GL_DEPTH_TEST)
@@ -85,7 +97,7 @@ def display(meshObj):
     scene.add(meshObj)
     camera = Camera()
     scene.camera = camera
-    mouseMove = MouseMove(scene.window, width, height)
+    mouseMove = MouseMove(scene)
     mouseMove.set_camera(camera)
-    scene.register(mouseMove)
+    scene.add(mouseMove)
     scene.render()

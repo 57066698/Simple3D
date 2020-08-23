@@ -4,8 +4,8 @@
 """
 
 from simple3D.scenes import display
-from simple3D.mesh import Mesh
-from simple3D.meshObject import MeshObject
+from simple3D.core.mesh import Mesh
+from simple3D.core.displayObject import DisplayObject
 from simple3D.mats.textureMaterial import TextureMaterial
 import numpy as np
 import cv2
@@ -59,7 +59,7 @@ def get_cube():
     img = cv2.imread("resources/box.png")
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     mat = TextureMaterial(texture_np=img)
-    meshObj = MeshObject(mesh, mat)
+    meshObj = DisplayObject(mesh, mat)
     return meshObj
 
 if __name__ == "__main__":

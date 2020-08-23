@@ -3,9 +3,7 @@
     @st
 """
 
-from simple3D import meshObject, material, mesh, display
-import numpy as np
-from simple3D.mats import vectexcolorMaterial
+from simple3D import DisplayObject, Mesh, display
 from simple3D.mats.lineMeterial import LineMeterial
 
 vertices = [0.0, 0.0, 0.0,
@@ -19,17 +17,17 @@ vertices_color = [1, 0, 0,
                   1, 0, 0,
                   0, 1, 0,
                   0, 1, 0,
-                  0, 0, 1,
-                  0, 0, 1]
+                  1, 1, 1,
+                  1, 1, 1]
 
 indices = [0, 1, 2, 3, 4, 5]
 
 def get_triangle():
-    mesh = mesh(vertices, indices, vectices_color=vertices_color)
+    mesh = Mesh(vertices, indices, vectices_color=vertices_color)
     material = LineMeterial()
-    meshObj = meshObject(mesh, material)
-    return meshObj
+    displayObj = DisplayObject(mesh, material)
+    return displayObj
 
 if __name__ == "__main__":
-    meshObj = get_triangle()
-    display(meshObj)
+    displayObj = get_triangle()
+    display(displayObj)
