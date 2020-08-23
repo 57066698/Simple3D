@@ -1,11 +1,11 @@
 from simple3D.core import displayObject
-from simple3D.core.transform import Transfom
+from simple3D.core.transform import Transform
 import pyrr
 import numpy as np
 
 class Camera:
     def __init__(self):
-        self.transform = Transfom()
+        self.transform = Transform()
         self.transform.pos = np.array([0, 0, 3])
         self.projection = pyrr.matrix44.create_perspective_projection_matrix(45, 1280 / 720, 0.1, 100)
         self.dis = 3

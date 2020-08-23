@@ -3,14 +3,14 @@
     @st
 """
 import pyrr
-from simple3D.core.transform import Transfom
+from simple3D.core.transform import Transform
 
 class DisplayObject:
     def __init__(self, mesh, material):
         self.mesh = mesh
         self.material = material
         self._is_showing = False
-        self.transfrom = Transfom()
+        self.transform = Transform()
 
     def render(self, projection, cameraLoc):
 
@@ -22,4 +22,4 @@ class DisplayObject:
         if not self._is_showing:
             self.material.show_mesh(self.mesh)
             self._is_showing = True
-        self.material.render(projection, cameraLoc, pyrr.matrix44.create_from_translation(self.transfrom.pos))
+        self.material.render(projection, cameraLoc, self.transform.matrix44)
