@@ -5,6 +5,7 @@
 import pyrr
 from simple3D.core.transform import Transform
 
+
 class DisplayObject:
     def __init__(self, mesh, material):
         self.mesh = mesh
@@ -13,7 +14,6 @@ class DisplayObject:
         self.transform = Transform()
 
     def render(self, projection, cameraLoc):
-
         # rot_x = pyrr.Matrix44.from_x_rotation(0.5 * glfw.get_time())
         # rot_y = pyrr.Matrix44.from_y_rotation(0.8 * glfw.get_time())
         #

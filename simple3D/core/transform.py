@@ -33,4 +33,17 @@ class Transform:
     """
 
     def rotate(self, matrix44):
-        self.matrix44 = np.dot(self.matrix44, matrix44)
+        self.matrix44[:3, :3] = np.dot(self.matrix44[:3, :3], matrix44[:3, :3])
+
+    @property
+    def euler(self):
+        mat = self.matrix44
+        angle_x = np.arctan2(mat[2, 1], mat[2, 2])
+        angle_y = np.arctan2(-mat[2, 0], np.sqrt(np.square(mat[2, 1]) + np.square(mat[2, 2])))
+        angle_z = np.arctan2(mat[1, 0], mat[0, 0])
+        return (angle_x, angle_y, angle_z)
+
+    @euler.setter
+    def euler(self, euler_angle):
+        euler_matrix44 = pyrr.matrix44.create_from_eulers(euler_angle)
+        self.matrix44[:3, :3] = euler_matrix44[:3, :3]

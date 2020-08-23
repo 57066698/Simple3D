@@ -30,6 +30,7 @@ class Scene:
 
         self.meshObjs = []
         self.components = []
+        self.update_calls = []
         self.frame_rate = framerate
 
         self.camera = None
@@ -47,8 +48,10 @@ class Scene:
         for item in args:
             if isinstance(item, DisplayObject):
                 self.meshObjs.append(item)
-            if isinstance(item, Component):
+            elif isinstance(item, Component):
                 self.components.append(item)
+            elif callable(item):
+                self.update_calls.append(item)
 
     def remove(self, *args):
         for item in args:
@@ -56,10 +59,14 @@ class Scene:
                 self.meshObjs.remove(item)
             elif isinstance(item, Component):
                 self.components.remove(item)
+            elif callable(item):
+                self.update_calls.remove(item)
 
-    def update_components(self):
+    def update(self):
         for component in self.components:
             component.update()
+        for call in self.update_calls:
+            call()
 
     def render(self):
 
@@ -81,7 +88,7 @@ class Scene:
             now = glfw.get_time()
 
             if now - previous >= time:
-                self.update_components()
+                self.update()
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
                 self.camera.render(self.meshObjs)
                 # screen_shot(self)
