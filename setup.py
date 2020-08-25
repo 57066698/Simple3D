@@ -8,6 +8,6 @@ setup(name='Simple3D',
       author='Li Xiao',
       author_email='57066698@qq.com',
       url='https://github.com/57066698/simple3D',
-      packages=['Simple3D'],
+      packages=['simple3D'],
      )
 
