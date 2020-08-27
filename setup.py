@@ -10,4 +10,3 @@ setup(name='Simple3D',
       url='https://github.com/57066698/simple3D',
       packages=['simple3D'],
      )
-

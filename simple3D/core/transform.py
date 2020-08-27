@@ -37,7 +37,7 @@ class Transform:
 
     @property
     def euler(self):
-        mat = self.matrix44
+        RM = self.matrix44
         angle_x = np.arctan2(RM[2, 1], RM[2, 2])
         angle_y = np.arctan2(-RM[2, 0], np.sqrt(np.square(RM[2, 1]) + np.square(RM[2, 2])))
         angle_z = np.arctan2(RM[1, 0], RM[0, 0])
@@ -50,10 +50,14 @@ class Transform:
     @property
     def rotation(self):
         return self.matrix44[:3, :3]
-    
+
     @rotation.setter
     def rotation(self, mat33):
         self.matrix44[:3, :3] = mat33
+
+    def transform_point(self, point):
+        point = np.concatenate((point, [1]), axis=0)
+        return np.dot(point, self.matrix44)[:3]
 
 
 def euler2RM(euler):
