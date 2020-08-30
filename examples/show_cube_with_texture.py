@@ -64,4 +64,5 @@ def get_cube():
 
 if __name__ == "__main__":
     meshObj = get_cube()
+    meshObj.transform.translate(-1, 0, 0)
     display(meshObj)

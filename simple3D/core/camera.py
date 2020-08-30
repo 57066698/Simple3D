@@ -14,6 +14,7 @@ class Camera:
         dis = self.transform.pos_length()
         dis = max(dis + zoom_num, 1)
         self.transform.pos = self.transform.pos_normalize() * dis
+        self.dis = dis
 
     def around(self, x, y):
         """
@@ -32,9 +33,27 @@ class Camera:
         self.transform.pos = self.transform.pos_normalize() * self.dis
 
     def render(self, meshObjs: [displayObject]):
-        pos_pyrr = pyrr.matrix44.create_look_at(pyrr.Vector3(self.transform.pos),
-                                                pyrr.Vector3([0, 0, 0]),
-                                                pyrr.Vector3([0, 1, 0]))
+        # pos_pyrr = pyrr.matrix44.create_look_at(pyrr.Vector3(self.transform.pos),
+        #                                         pyrr.Vector3([0, 0, 0]),
+        #                                         pyrr.Vector3([0, 1, 0]))
+
+        look_at = create_look_at(self.transform.pos, np.array([0, 0, 0]), np.array([0, 1, 0]))
 
         for meshObject in meshObjs:
-            meshObject.render(self.projection, pos_pyrr)
+            meshObject.render(self.projection, look_at)
+
+def _normalize(vector):
+    return vector / np.linalg.norm(vector)
+
+def create_look_at(eye, target, up_vector, dtype=np.float64):
+    forward = _normalize(target - eye)
+    right = _normalize(np.cross(forward, up_vector))
+    up = _normalize(np.cross(right, forward))
+
+    m = np.array(((right[0], up[0], -forward[0], 0.),
+                  (right[1], up[1], -forward[1], 0.),
+                  (right[2], up[2], -forward[2], 0.),
+                  (-np.dot(right, eye), -np.dot(up, eye), np.dot(forward, eye), 1.0)
+                  ), dtype=dtype)
+
+    return m
