@@ -5,6 +5,7 @@
 import glfw
 import pyrr
 from simple3D import Component, DisplayObject
+from simple3D.core.transform import euler2RM
 import numpy as np
 
 class MouseMoveDisplayObject(Component):
@@ -30,8 +31,7 @@ class MouseMoveDisplayObject(Component):
                 self.display_objects.append(item)
 
     def update(self):
-        rotate = pyrr.matrix44.create_from_eulers([-self.cached_mouse_move_Y * 0.01, 0, -self.cached_mouse_move_X * 0.01])
-        # print(rotate)
+        rotate = euler2RM([self.cached_mouse_move_Y * 0.01, -self.cached_mouse_move_X * 0.01, 0])
         for obj in self.display_objects:
             obj.transform.rotate(rotate)
 
