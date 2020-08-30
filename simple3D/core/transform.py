@@ -13,14 +13,14 @@ class Transform:
     """
     @property
     def pos(self):
-        return self.matrix44[3, :-1]
+        return self.matrix44[:-1, 3]
 
     @pos.setter
     def pos(self, value):
-        self.matrix44[3, :-1] = value
+        self.matrix44[:-1, 3] = value
 
     def translate(self, x, y, z):
-        self.matrix44[3, :-1] += np.array([x, y, z])
+        self.matrix44[:-1, 3] += np.array([x, y, z])
 
     def pos_length(self):
         return np.linalg.norm(self.pos)
@@ -33,7 +33,7 @@ class Transform:
     """
 
     def rotate(self, matrix44):
-        self.matrix44[:3, :3] = np.dot(self.matrix44[:3, :3], matrix44[:3, :3])
+        self.matrix44[:3, :3] = np.dot(matrix44[:3, :3], self.matrix44[:3, :3])
 
     @property
     def euler(self):
@@ -57,8 +57,11 @@ class Transform:
 
     def transform_point(self, point):
         point = np.concatenate((point, [1]), axis=0)
-        return np.dot(point, self.matrix44)[:3]
+        return np.dot(self.matrix44, point)[:3]
 
+    @property
+    def render_matrix(self):
+        return np.transpose(self.matrix44)
 
 def euler2RM(euler):
     """

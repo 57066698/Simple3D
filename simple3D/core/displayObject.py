@@ -22,4 +22,4 @@ class DisplayObject:
         if not self._is_showing:
             self.material.show_mesh(self.mesh)
             self._is_showing = True
-        self.material.render(projection, cameraLoc, self.transform.matrix44)
+        self.material.render(projection, cameraLoc, self.transform.render_matrix)
