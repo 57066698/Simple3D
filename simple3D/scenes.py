@@ -147,3 +147,5 @@ def display(*displayObjects, rows = 1, cols = 1, components=None):
     if components:
         scene.add(*components)
     scene.render_scene()
+
+    return scene
