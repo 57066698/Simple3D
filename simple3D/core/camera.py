@@ -4,10 +4,10 @@ import pyrr
 import numpy as np
 
 class Camera:
-    def __init__(self):
+    def __init__(self, width=1280, height=720):
         self.transform = Transform()
         self.transform.pos = np.array([0, 0, 3])
-        self.projection = pyrr.matrix44.create_perspective_projection_matrix(45, 1280 / 720, 0.1, 100)
+        self.projection = pyrr.matrix44.create_perspective_projection_matrix(45, width / height, 0.1, 100)
         self.dis = 3
 
     def zoom(self, zoom_num):
@@ -32,15 +32,23 @@ class Camera:
         self.transform.pos = self.transform.pos + np.array([-x * 0.01, -y * 0.01, 0])
         self.transform.pos = self.transform.pos_normalize() * self.dis
 
-    def render(self, meshObjs: [displayObject]):
-        # pos_pyrr = pyrr.matrix44.create_look_at(pyrr.Vector3(self.transform.pos),
-        #                                         pyrr.Vector3([0, 0, 0]),
-        #                                         pyrr.Vector3([0, 1, 0]))
+    @property
+    def lookat_matrix(self):
+        return create_look_at(self.transform.pos, np.array([0, 0, 0]), np.array([0, 1, 0]))
 
-        look_at = create_look_at(self.transform.pos, np.array([0, 0, 0]), np.array([0, 1, 0]))
+    @property
+    def projection_matrix(self):
+        return self.projection
 
-        for meshObject in meshObjs:
-            meshObject.render(self.projection, look_at)
+    # def render(self, meshObjs: [displayObject]):
+    #     # pos_pyrr = pyrr.matrix44.create_look_at(pyrr.Vector3(self.transform.pos),
+    #     #                                         pyrr.Vector3([0, 0, 0]),
+    #     #                                         pyrr.Vector3([0, 1, 0]))
+    #
+    #     look_at =
+    #
+    #     for meshObject in meshObjs:
+    #         meshObject.render_scene(self.projection, look_at)
 
 def _normalize(vector):
     return vector / np.linalg.norm(vector)

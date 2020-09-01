@@ -4,7 +4,7 @@
 """
 
 from simple3D import DisplayObject, Mesh, Scene
-from simple3D.components.moseMoveDisplayObject import MouseMoveDisplayObject
+from simple3D.components.mouseRotate import MouseRotate
 from simple3D.mats.lineMeterial import LineMeterial
 
 vertices = [0.0, 0.0, 0.0,
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     displayObj = get_triangle()
     scene = Scene()
     scene.add(displayObj)
-    mover = MouseMoveDisplayObject(scene)
+    mover = MouseRotate(scene)
     mover.add(displayObj)
     scene.add(mover)
-    scene.render()
+    scene.render_scene()

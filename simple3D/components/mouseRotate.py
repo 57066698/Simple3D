@@ -3,9 +3,12 @@
 """
 
 import glfw
-from simple3D import Component
+import pyrr
+from simple3D import Component, DisplayObject, Transform
+from simple3D.core.transform import euler2RM
+import numpy as np
 
-class MouseMove(Component):
+class MouseRotate(Component):
     def __init__(self, scene):
         super().__init__()
 
@@ -20,19 +23,30 @@ class MouseMove(Component):
         self.cached_mouse_move_X = 0
         self.cached_mouse_move_Y = 0
         self.cached_scroll_num = 0
-        self.camera = None
+        self.transforms = []
 
-    def set_camera(self, camera):
-        self.camera = camera
+    def add(self, *args):
+        for item in args:
+            if isinstance(item, DisplayObject):
+                self.transforms.append(item.transform)
+            elif isinstance(item, Transform):
+                self.transforms.append(item)
+
+    def remove(self, *args):
+        for item in args:
+            if isinstance(item, DisplayObject):
+                self.transforms.remove(item.transform)
+            elif isinstance(item, Transform):
+                self.transforms.remove(item)
 
     def update(self):
         # rotate
-        self.camera.around(self.cached_mouse_move_X, self.cached_mouse_move_Y)
+        rotate = euler2RM([-self.cached_mouse_move_Y * 0.01, self.cached_mouse_move_X * 0.01, 0])
+        for obj in self.transforms:
+            obj.rotate(rotate)
+
         self.cached_mouse_move_X = 0
         self.cached_mouse_move_Y = 0
-        # zoom
-        self.camera.zoom(self.cached_scroll_num)
-        self.cached_scroll_num = 0
 
     # 鼠标左键按下
     def mouse_down_callback(self, window, button, action, mods):
@@ -57,8 +71,8 @@ class MouseMove(Component):
 
         self.lastX = xpos
         self.lastY = ypos
-        self.cached_mouse_move_X = xoffset
-        self.cached_mouse_move_Y = yoffset
+        self.cached_mouse_move_X += xoffset
+        self.cached_mouse_move_Y += yoffset
 
     # 鼠标滚轮
     def scroll_callback(self, window, xoffset, yoffset):

@@ -54,9 +54,12 @@ vertices_np = vertices_np.reshape((-1))
 uv_np = vertices_and_uv_np.reshape((-1, 5))[:, 3:5]
 uv_np = uv_np.reshape((-1))
 
+
 def get_cube():
+    from pathlib import Path
     mesh = Mesh(vertices_np, indices, uvs=uv_np)
-    img = cv2.imread("resources/box.png")
+    path = Path(__file__).parent/'resources'/'box.png'
+    img = cv2.imread(str(path))
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     mat = TextureMaterial(texture_np=img)
     meshObj = DisplayObject(mesh, mat)
@@ -64,5 +67,4 @@ def get_cube():
 
 if __name__ == "__main__":
     meshObj = get_cube()
-    meshObj.transform.translate(-1, 0, 0)
     display(meshObj)

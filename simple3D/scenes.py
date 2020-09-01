@@ -4,12 +4,13 @@
 
 import glfw
 from OpenGL.GL import *
-from simple3D import Camera, DisplayObject
-from simple3D import Component
-from simple3D.components.mouseMove import MouseMove
+from simple3D import Camera, DisplayObject, Material, Component
+from simple3D import ViewPort
+from simple3D.components.mouseRotate import MouseRotate
+import numpy as np
 
 class Scene:
-    def __init__(self, WIDTH=1280, HEIGHT=720, framerate=25):
+    def __init__(self, WIDTH=1280, HEIGHT=720, framerate=25, use_default_viewport=True):
         self.width = WIDTH
         self.height = HEIGHT
         # initializing glfw library
@@ -28,39 +29,49 @@ class Scene:
         # set the callback function for window resize
         glfw.set_window_size_callback(self.window, self.window_resize)
 
-        self.meshObjs = []
+        self.displayObjs = []
         self.components = []
         self.update_calls = []
+        self.viewports = []
         self.frame_rate = framerate
+        if use_default_viewport:
+            self.viewports.append(ViewPort(0, 0, self.width, self.height
+                                           , render_scene=True, use_default_camera=True))
 
         self.camera = None
 
     @property
     def default_camera(self):
         if self.camera == None:
-            self.camera = Camera()
+            self.camera = Camera(self.width, self.height)
         return self.camera
 
     def window_resize(self, window, width, height):
+        self.width = width
+        self.height = height
         glViewport(0, 0, width, height)
 
     def add(self, *args):
         for item in args:
             if isinstance(item, DisplayObject):
-                self.meshObjs.append(item)
+                self.displayObjs.append(item)
             elif isinstance(item, Component):
                 self.components.append(item)
             elif callable(item):
                 self.update_calls.append(item)
+            elif isinstance(item, ViewPort):
+                self.viewports.append(item)
 
     def remove(self, *args):
         for item in args:
             if isinstance(item, DisplayObject):
-                self.meshObjs.remove(item)
+                self.displayObjs.remove(item)
             elif isinstance(item, Component):
                 self.components.remove(item)
             elif callable(item):
                 self.update_calls.remove(item)
+            elif isinstance(item, ViewPort):
+                self.viewports.append(item)
 
     def update(self):
         for component in self.components:
@@ -68,10 +79,7 @@ class Scene:
         for call in self.update_calls:
             call()
 
-    def render(self):
-
-        if self.camera is None:
-            self.camera = Camera()
+    def render_scene(self):
 
         glClearColor(0, 0.1, 0.1, 1)
         glEnable(GL_DEPTH_TEST)
@@ -88,23 +96,54 @@ class Scene:
             now = glfw.get_time()
 
             if now - previous >= time:
+                # events
                 self.update()
+                # clear buffer
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-                self.camera.render(self.meshObjs)
-                # screen_shot(self)
+                # render viewports
+                for viewport in self.viewports:
+                    self.render_viewport(viewport)
+                # show buffer to scene
                 glfw.swap_buffers(self.window)
                 previous = previous + time
 
         glfw.terminate()
 
+    def render_viewport(self, viewport):
 
-def display(meshObj):
+        displayObjects = viewport.displayObjs + self.displayObjs if viewport.render_scene \
+            else viewport.displayObjs
+        if len(displayObjects) == 0: return
+
+        glViewport(viewport.x, viewport.y, viewport.width, viewport.height)
+        camera = self.default_camera if viewport.use_default_camera else viewport.camera
+        camera_lookat = camera.lookat_matrix
+        camera_projection = camera.projection
+
+        for obj in displayObjects:
+            if obj.material and isinstance(obj.material, Material):
+                if not obj.is_showing:
+                    obj.show()
+                obj.material.render(camera_projection, camera_lookat, obj.transform.render_matrix)
+
+def display(*displayObjects, rows = 1, cols = 1, components=None):
     width, height = 1280, 720
-    scene = Scene(width, height)
-    scene.add(meshObj)
-    camera = Camera()
-    scene.camera = camera
-    mouseMove = MouseMove(scene)
-    mouseMove.set_camera(camera)
+    scene = Scene(width, height, use_default_viewport=False)
+
+    viewPorts = []
+
+    for i in range(len(displayObjects)):
+        r = np.int(i/cols)
+        c = i - r*rows
+        box = (c * width/cols, r * height/rows, width/cols, height/rows)
+        viewPort = ViewPort(*box, use_default_camera=False, render_scene=False)
+        viewPort.add(displayObjects[i])
+        viewPorts.append(viewPort)
+
+    scene.add(*viewPorts)
+    mouseMove = MouseRotate(scene)
+    mouseMove.add(*displayObjects)
     scene.add(mouseMove)
-    scene.render()
+    if components:
+        scene.add(*components)
+    scene.render_scene()

@@ -5,7 +5,6 @@
 import pyrr
 from simple3D.core.transform import Transform
 
-
 class DisplayObject:
     def __init__(self, mesh, material):
         self.mesh = mesh
@@ -13,13 +12,13 @@ class DisplayObject:
         self._is_showing = False
         self.transform = Transform()
 
-    def render(self, projection, cameraLoc):
-        # rot_x = pyrr.Matrix44.from_x_rotation(0.5 * glfw.get_time())
-        # rot_y = pyrr.Matrix44.from_y_rotation(0.8 * glfw.get_time())
-        #
-        # meshLoc = pyrr.matrix44.multiply(rot_x, rot_y)
+    @property
+    def is_showing(self):
+        return self._is_showing
 
-        if not self._is_showing:
-            self.material.show_mesh(self.mesh)
-            self._is_showing = True
+    def show(self):
+        self.material.show_mesh(self.mesh)
+        self._is_showing = True
+
+    def render(self, projection, cameraLoc):
         self.material.render(projection, cameraLoc, self.transform.render_matrix)

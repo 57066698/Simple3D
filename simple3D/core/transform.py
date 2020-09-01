@@ -1,12 +1,11 @@
 """
     控制位置缩放信息
 """
-import pyrr
 import numpy as np
 
 class Transform:
     def __init__(self):
-        self.matrix44 = pyrr.matrix44.create_identity()
+        self.matrix44 = np.identity(4, dtype=np.float64)
 
     """
         ---------------------   translates   --------------------
