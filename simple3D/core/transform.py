@@ -1,11 +1,43 @@
 """
     控制位置缩放信息
+    and parents
 """
 import numpy as np
 
 class Transform:
     def __init__(self):
         self.matrix44 = np.identity(4, dtype=np.float64)
+        self._parent = None
+
+    @property
+    def parent(self):
+        return self._parent
+
+    @parent.setter
+    def parent(self, transform):
+        if transform == None:
+            self.matrix44 = self.world_matrix44
+            self._parent = None
+        else:
+            self._parent = transform
+
+    @parent.setter
+    def parent(self, transform):
+        self._parent = transform
+
+    """
+        ---------------------   transform    -------------------
+    """
+
+    def transform_point(self, point):
+        point = np.concatenate((point, [1]), axis=0)
+        return np.dot(self.matrix44, point)[:3]
+
+    @property
+    def world_matrix44(self):
+        if self._parent:
+            return np.dot(self._parent.world_matrix44, self.matrix44)
+        return self.matrix44
 
     """
         ---------------------   translates   --------------------
@@ -17,6 +49,10 @@ class Transform:
     @pos.setter
     def pos(self, value):
         self.matrix44[:-1, 3] = value
+
+    @property
+    def world_pos(self):
+        return self.world_matrix44[:-1, 3]
 
     def translate(self, x, y, z):
         self.matrix44[:-1, 3] += np.array([x, y, z])
@@ -54,13 +90,13 @@ class Transform:
     def rotation(self, mat33):
         self.matrix44[:3, :3] = mat33
 
-    def transform_point(self, point):
-        point = np.concatenate((point, [1]), axis=0)
-        return np.dot(self.matrix44, point)[:3]
+    @property
+    def world_rotation(self):
+        return self.world_matrix44[:3, :3]
 
     @property
     def render_matrix(self):
-        return np.transpose(self.matrix44)
+        return np.transpose(self.world_matrix44)
 
 def euler2RM(euler):
     """

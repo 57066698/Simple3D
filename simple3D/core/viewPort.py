@@ -2,6 +2,7 @@
     a viewport
 """
 from simple3D import DisplayObject, Camera
+import numpy as np
 
 class ViewPort:
     def __init__(self, x, y, width, height, render_scene=False, use_default_camera=False):
@@ -24,3 +25,16 @@ class ViewPort:
         for item in args:
             if isinstance(item, DisplayObject):
                 self.displayObjs.append(item)
+
+
+def get_aranged_viewports(screen_width, screen_height, rows, cols):
+    viewPorts = []
+
+    for i in range(rows * cols):
+        r = np.int(i / cols)
+        c = i - r * rows
+        box = (c * screen_width / cols, r * screen_height / rows, screen_width / cols, screen_height / rows)
+        viewPort = ViewPort(*box, use_default_camera=False, render_scene=False)
+        viewPorts.append(viewPort)
+
+    return viewPorts
