@@ -4,8 +4,7 @@
 
 import glfw
 from OpenGL.GL import *
-from simple3D import Camera, DisplayObject, Material, Component, get_aranged_viewports
-from simple3D import ViewPort
+from simple3D import Camera, DisplayObject, Material, Component, ViewPort
 from simple3D.components.mouseRotate import MouseRotate
 import numpy as np
 
@@ -126,13 +125,14 @@ class Scene:
                     obj.show()
                 obj.material.render(camera_projection, camera_lookat, obj.transform.render_matrix)
 
-def display(*displayObjects, rows = 1, cols = 1, components=None, muti_viewport=True):
+
+def display(*displayObjects, rows = 1, cols = 1, components=None, muti_viewport=True, mouseRotae=True):
 
     width, height = 1280, 720
     scene = Scene(width, height, use_default_viewport=not muti_viewport)
 
     if muti_viewport:
-        viewPorts = get_aranged_viewports(width, height, rows, cols)
+        viewPorts = ViewPort.get_aranged_viewports(width, height, rows, cols)
         for i in range(len(displayObjects)):
             viewPorts[i].add(displayObjects[i])
         scene.add(*viewPorts)

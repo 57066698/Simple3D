@@ -26,15 +26,15 @@ class ViewPort:
             if isinstance(item, DisplayObject):
                 self.displayObjs.append(item)
 
+    @classmethod
+    def get_aranged_viewports(cls, screen_width, screen_height, rows, cols):
+        viewPorts = []
 
-def get_aranged_viewports(screen_width, screen_height, rows, cols):
-    viewPorts = []
+        for i in range(rows * cols):
+            r = np.int(i / cols)
+            c = i - r * rows
+            viewPort = cls(x=c * screen_width / cols, y=r * screen_height / rows, width=screen_width / cols, height=screen_height / rows,
+                                    use_default_camera=False, render_scene=False)
+            viewPorts.append(viewPort)
 
-    for i in range(rows * cols):
-        r = np.int(i / cols)
-        c = i - r * rows
-        box = (c * screen_width / cols, r * screen_height / rows, screen_width / cols, screen_height / rows)
-        viewPort = ViewPort(*box, use_default_camera=False, render_scene=False)
-        viewPorts.append(viewPort)
-
-    return viewPorts
+        return viewPorts

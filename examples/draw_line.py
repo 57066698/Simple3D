@@ -23,14 +23,14 @@ vertices_color = [1, 0, 0,
 
 indices = [0, 1, 2, 3, 4, 5]
 
-def get_triangle():
+def get_axis():
     mesh = Mesh(vertices, indices, vectices_color=vertices_color)
     material = LineMeterial()
     displayObj = DisplayObject(mesh, material)
     return displayObj
 
 if __name__ == "__main__":
-    displayObj = get_triangle()
+    displayObj = get_axis()
     scene = Scene()
     scene.add(displayObj)
     mover = MouseRotate(scene)

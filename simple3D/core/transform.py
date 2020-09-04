@@ -98,6 +98,20 @@ class Transform:
     def render_matrix(self):
         return np.transpose(self.world_matrix44)
 
+    @classmethod
+    def euler2RM(cls, euler):
+        sinP, cosP = np.sin(euler[0]), np.cos(euler[0])
+        sinTheta, cosTheta = np.sin(euler[1]), np.cos(euler[1])
+        sinC, cosC = np.sin(euler[2]), np.cos(euler[2])
+
+        rm_x = np.array([1, 0, 0, 0, cosP, -sinP, 0, sinP, cosP]).reshape((3, 3))
+        rm_y = np.array([cosTheta, 0, sinTheta, 0, 1, 0, -sinTheta, 0, cosTheta]).reshape((3, 3))
+        rm_z = np.array([cosC, -sinC, 0, sinC, cosC, 0, 0, 0, 1]).reshape((3, 3))
+
+        rm_zyx = np.dot(np.dot(rm_z, rm_y), rm_x)
+
+        return rm_zyx
+
 def euler2RM(euler):
     """
 
