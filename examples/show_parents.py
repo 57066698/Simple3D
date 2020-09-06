@@ -8,7 +8,7 @@ from examples.draw_line import get_axis
 from examples.show_triangle import get_triangle
 
 from simple3D.components.mouseRotate import MouseRotate
-from simple3D import Scene, ViewPort, display
+from simple3D import Window, ViewPort, display
 from simple3D.components.mouseRotate import MouseRotate
 
 if __name__ == "__main__":
@@ -17,10 +17,10 @@ if __name__ == "__main__":
     axis2.transform.parent = axis1.transform
     axis2.transform.pos = [0, 1, 0]
 
-    scene = Scene()
-    scene.add(axis1, axis2)
-    mouseRotate = MouseRotate(scene)
+    window = Window()
+    window.add(axis1, axis2)
+    mouseRotate = MouseRotate(window)
     mouseRotate.add(axis1)
 
-    scene.add(mouseRotate)
-    scene.render_scene()
+    window.add(mouseRotate)
+    window.render_scene()

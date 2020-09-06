@@ -1,15 +1,14 @@
 """
-    openGL 渲染封装
+    打开一个窗口，显示其中内容
 """
 
 import glfw
 from OpenGL.GL import *
-from simple3D import Camera, DisplayObject, Material, Component, ViewPort
+from simple3D import Camera, DisplayObject, Material, Component, ViewPort, Scene
 from simple3D.components.mouseRotate import MouseRotate
-import numpy as np
 
-class Scene:
-    def __init__(self, WIDTH=1280, HEIGHT=720, framerate=25, use_default_viewport=True):
+class Window:
+    def __init__(self, WIDTH=1280, HEIGHT=720, framerate=25):
         self.width = WIDTH
         self.height = HEIGHT
         # initializing glfw library
@@ -28,22 +27,31 @@ class Scene:
         # set the callback function for window resize
         glfw.set_window_size_callback(self.window, self.window_resize)
 
-        self.displayObjs = []
-        self.components = []
-        self.update_calls = []
+        self.scenes = []
         self.viewports = []
+        self.cameras = []
+        self.update_calls = []
+        self.components = []
         self.frame_rate = framerate
-        if use_default_viewport:
-            self.viewports.append(ViewPort(0, 0, self.width, self.height
-                                           , render_scene=True, use_default_camera=True))
-
-        self.camera = None
 
     @property
     def default_camera(self):
-        if self.camera == None:
+        if len(self.cameras) == 0:
             self.camera = Camera(self.width, self.height)
         return self.camera
+
+    @property
+    def default_scene(self):
+        if len(self.scenes) == 0:
+            self.scenes.append(Scene())
+        return self.scenes[0]
+
+    @property
+    def default_viewport(self)->ViewPort:
+        if len(self.viewports) == 0:
+            viewPort = ViewPort(0, 0, self.width, self.height, scene=self.default_scene)
+            self.viewports.append(viewPort)
+        return self.viewports[0]
 
     def window_resize(self, window, width, height):
         self.width = width
@@ -53,30 +61,39 @@ class Scene:
     def add(self, *args):
         for item in args:
             if isinstance(item, DisplayObject):
-                self.displayObjs.append(item)
-            elif isinstance(item, Component):
-                self.components.append(item)
+                self.default_viewport.scene.add(item)
             elif callable(item):
                 self.update_calls.append(item)
             elif isinstance(item, ViewPort):
                 self.viewports.append(item)
+                if item._scene and (item._scene not in self.scenes):
+                    self.scenes.append(item._scene)
+            elif isinstance(item, Scene):
+                self.scenes.append(item)
+            elif isinstance(item, Component):
+                self.components.append(item)
 
     def remove(self, *args):
         for item in args:
             if isinstance(item, DisplayObject):
-                self.displayObjs.remove(item)
+                for scene in self.scenes:
+                    scene.remove(item)
             elif isinstance(item, Component):
                 self.components.remove(item)
             elif callable(item):
                 self.update_calls.remove(item)
             elif isinstance(item, ViewPort):
-                self.viewports.append(item)
+                self.viewports.remove(item)
+            elif isinstance(item, Scene):
+                self.scenes.remove(item)
 
     def update(self):
-        for component in self.components:
-            component.update()
+        for scene in self.scenes:
+            scene.update()
         for call in self.update_calls:
             call()
+        for component in self.components:
+            component.update()
 
     def render_scene(self):
 
@@ -108,14 +125,12 @@ class Scene:
 
         glfw.terminate()
 
-    def render_viewport(self, viewport):
+    def render_viewport(self, viewport:ViewPort):
 
-        displayObjects = viewport.displayObjs + self.displayObjs if viewport.render_scene \
-            else viewport.displayObjs
+        displayObjects = viewport.scene.displayObjs
         if len(displayObjects) == 0: return
-
         glViewport(viewport.x, viewport.y, viewport.width, viewport.height)
-        camera = self.default_camera if viewport.use_default_camera else viewport.camera
+        camera = viewport.camera
         camera_lookat = camera.lookat_matrix
         camera_projection = camera.projection
 
@@ -129,20 +144,23 @@ class Scene:
 def display(*displayObjects, rows = 1, cols = 1, components=None, muti_viewport=True, mouseRotae=True):
 
     width, height = 1280, 720
-    scene = Scene(width, height, use_default_viewport=not muti_viewport)
+    window = Window(width, height)
 
     if muti_viewport:
         viewPorts = ViewPort.get_aranged_viewports(width, height, rows, cols)
         for i in range(len(displayObjects)):
-            viewPorts[i].add(displayObjects[i])
-        scene.add(*viewPorts)
+            scene = Scene()
+            scene.add(displayObjects[i])
+            window.add(scene)
+            viewPorts[i].add(scene)
+        window.add(*viewPorts)
     else:
-        scene.add(*displayObjects)
-    mouseMove = MouseRotate(scene)
+        window.add(*displayObjects)
+    mouseMove = MouseRotate(window)
     mouseMove.add(*displayObjects)
-    scene.add(mouseMove)
+    window.add(mouseMove)
     if components:
-        scene.add(*components)
-    scene.render_scene()
+        window.add(*components)
+    window.render_scene()
 
-    return scene
+    return window

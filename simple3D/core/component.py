@@ -4,4 +4,7 @@
 
 class Component:
     def __init__(self):
-        self.a = 1
+        pass
+
+    def update(self):
+        pass

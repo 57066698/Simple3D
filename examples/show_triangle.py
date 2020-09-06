@@ -5,7 +5,7 @@
 
 from simple3D.core.displayObject import DisplayObject
 from simple3D.core.mesh import Mesh
-from simple3D.scenes import display
+from simple3D import display
 import numpy as np
 from simple3D.mats.vectexcolorMaterial import VectexcolorMaterial
 

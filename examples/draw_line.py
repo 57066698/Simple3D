@@ -3,7 +3,7 @@
     @st
 """
 
-from simple3D import DisplayObject, Mesh, Scene
+from simple3D import DisplayObject, Mesh, Window
 from simple3D.components.mouseRotate import MouseRotate
 from simple3D.mats.lineMeterial import LineMeterial
 
@@ -31,9 +31,9 @@ def get_axis():
 
 if __name__ == "__main__":
     displayObj = get_axis()
-    scene = Scene()
-    scene.add(displayObj)
-    mover = MouseRotate(scene)
+    window = Window()
+    window.add(displayObj)
+    mover = MouseRotate(window)
     mover.add(displayObj)
-    scene.add(mover)
-    scene.render_scene()
+    window.add(mover)
+    window.render_scene()
