@@ -95,7 +95,7 @@ class Window:
         for component in self.components:
             component.update()
 
-    def render_scene(self):
+    def render(self):
 
         glClearColor(0, 0.1, 0.1, 1)
         glEnable(GL_DEPTH_TEST)

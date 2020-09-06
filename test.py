@@ -1,14 +1,14 @@
 ## expNet npz
-from simple3D import Transform
+from simple3D import Window
+from simple3D.components.keyboardRotate import KeyboardRotate
+from examples.draw_line import get_axis
 import numpy as np
 
-a = Transform()
-a.rotate(Transform.euler2RM([0, np.pi/2, 0]))
-b = Transform()
-b.rotate(Transform.euler2RM([np.pi/2, 0, 0]))
+window = Window()
+axis = get_axis()
+key = KeyboardRotate(window)
+key.add(axis)
+window.add(key, axis)
 
-ab = np.dot(a.matrix44, b.matrix44)
-ba = np.dot(b.matrix44, a.matrix44)
+window.render()
 
-print(np.dot(ab, [0, 1, 0, 1]))
-print(np.dot(ba, [0, 1, 0, 1]))
