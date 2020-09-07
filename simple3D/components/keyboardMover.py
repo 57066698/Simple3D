@@ -8,15 +8,13 @@ from simple3D import Component, DisplayObject, Transform
 from simple3D.core.transform import euler2RM
 import numpy as np
 
-class KeyboardRotate(Component):
+class KeyboardMover(Component):
     def __init__(self, scene):
         super().__init__()
 
         glfw.set_key_callback(scene.window, self.key_callback)
-
         # key
         self.down_keys = []
-
         #
         self.transforms = []
 
@@ -59,5 +57,3 @@ class KeyboardRotate(Component):
 
             for obj in self.transforms:
                 obj.translate(x, y, z)
-
-
