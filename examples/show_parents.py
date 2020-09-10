@@ -23,4 +23,4 @@ if __name__ == "__main__":
     mouseRotate.add(axis1)
 
     window.add(mouseRotate)
-    window.render_scene()
+    window.render()
