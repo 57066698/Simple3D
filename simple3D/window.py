@@ -2,6 +2,16 @@
     打开一个窗口，显示其中内容
 """
 
+#todo: 提供快速开副线程的方法
+#todo: 取消display, 整合进window
+#todo: 层级为 window <- viewport and camera <- render objects
+#todo: render 由viewport组织, 渲染对应camera的所有包含内容
+#todo: render objects 只加进window
+#todo: display(test_cube) 放入tools
+#todo: viewport分屏方法写明白
+#todo: glfw events cache起来等待外部调用
+#todo: display object 的数据和显存信息分开，渲染时候要逐个display object lock, unlock
+
 import glfw
 from OpenGL.GL import *
 from simple3D import Camera, DisplayObject, Material, Component, ViewPort, Scene
@@ -140,8 +150,31 @@ class Window:
                     obj.show()
                 obj.material.render(camera_projection, camera_lookat, obj.transform.render_matrix)
 
+    def display_cube(self):
+        from . import Mesh
+        from .mats.vectexcolorMaterial import VectexcolorMaterial
+        vertices = [0.0, 0.0, 0.0,
+                    1.5, 0, 0.0,
+                    0, 1, 0.0,
+                    0, 0, 0.5]
 
-def display(*displayObjects, rows = 1, cols = 1, components=None, muti_viewport=True, mouseRotae=True):
+        color = [1.0, 0.0, 0.0,
+                 0.0, 1.0, 0.0,
+                 0.0, 0.0, 1.0,
+                 1.0, 1.0, 1.0]
+
+        indices = [0, 1, 2,
+                   0, 2, 3,
+                   0, 3, 1,
+                   1, 3, 2]
+
+        mesh = Mesh(vertices, indices, vectices_color=color)
+        material = VectexcolorMaterial()
+        meshObj = DisplayObject(mesh, material)
+        self.add(meshObj)
+        self.render()
+
+def display(*displayObjects, rows = 1, cols = 1, components=None, muti_viewport=True):
 
     width, height = 1280, 720
     window = Window(width, height)
@@ -161,6 +194,6 @@ def display(*displayObjects, rows = 1, cols = 1, components=None, muti_viewport=
     window.add(mouseMove)
     if components:
         window.add(*components)
-    window.render_scene()
+    window.render()
 
     return window

@@ -1,14 +1,16 @@
-## expNet npz
-from simple3D import Window
-from simple3D.components.keyboardMover import KeyboardMover
-from examples.draw_line import get_axis
-import numpy as np
+import threading
+from threading import *
 
-window = Window()
-axis = get_axis()
-key = KeyboardMover(window)
-key.add(axis)
-window.add(key, axis)
+import glfw
+from threading import *
+print(current_thread().getName())
+def mt():
+    from simple3D import Window
 
-window.render()
+    window = Window()
+    window.display_cube()
+    print(current_thread().getName())
 
+child=Thread(target=mt)
+child.start()
+print("Executing thread name :",current_thread().getName())
