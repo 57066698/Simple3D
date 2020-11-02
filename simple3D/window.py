@@ -2,29 +2,20 @@
     打开一个窗口，显示其中内容
 """
 
-#todo: 提供快速开副线程的方法
-#todo: 取消display, 整合进window
-#todo: 层级为 window <- viewport and camera <- render objects
-#todo: render 由viewport组织, 渲染对应camera的所有包含内容
-#todo: render objects 只加进window
-#todo: display(test_cube) 放入tools
-#todo: viewport分屏方法写明白
-#todo: glfw events cache起来等待外部调用
-#todo: display object 的数据和显存信息分开，渲染时候要逐个display object lock, unlock
-
 import glfw
 from OpenGL.GL import *
 from simple3D import Camera, DisplayObject, Material, Component, ViewPort, Scene
 from simple3D.components.mouseRotate import MouseRotate
+import threading
 
 class Window:
-    def __init__(self, WIDTH=1280, HEIGHT=720, framerate=25):
+    def __init__(self, WIDTH=1280, HEIGHT=720, framerate=25, name="Display"):
         self.width = WIDTH
         self.height = HEIGHT
         # initializing glfw library
         if not glfw.init():
             raise Exception("glfw can not be initialized!")
-        self.window = glfw.create_window(self.width, self.height, "Display", None, None)
+        self.window = glfw.create_window(self.width, self.height, name, None, None)
         # check if window was created
         if not self.window:
             glfw.terminate()
@@ -43,6 +34,18 @@ class Window:
         self.update_calls = []
         self.components = []
         self.frame_rate = framerate
+
+        self.thread = None
+        self.stop_render = False
+
+    def start(self):
+        self.stop_render = False
+        self.thread = threading.Thread(target=self.render, args=())
+        self.thread.daemon = True  # Daemonize thread
+        self.thread.start()
+
+    def stop(self):
+        self.stop_render = True
 
     @property
     def default_camera(self):
@@ -68,6 +71,10 @@ class Window:
         self.height = height
         glViewport(0, 0, width, height)
 
+    def splitViewPorts(self, rows, cols):
+        viewPorts = ViewPort.get_aranged_viewports(self.width, self.height, rows, cols)
+        self.add(*viewPorts)
+
     def add(self, *args):
         for item in args:
             if isinstance(item, DisplayObject):
@@ -82,6 +89,7 @@ class Window:
                 self.scenes.append(item)
             elif isinstance(item, Component):
                 self.components.append(item)
+        return self
 
     def remove(self, *args):
         for item in args:
